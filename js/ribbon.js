@@ -47,6 +47,7 @@
     download: '<path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>',
     keyboard: '<path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3z"/><path fill="currentColor" d="M6 9h2v2H6zm3 0h2v2H9zm3 0h2v2h-2zm3 0h2v2h-2zM6 12h2v2H6zm3 0h8v2H9zm9-3h0M8 15h8v1.5H8z"/>',
     ocr: '<path fill="currentColor" d="M3 5h11v2H3zm0 4h8v2H3zm0 4h6v2H3z"/><circle cx="17" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M20 19l2.5 2.5"/>',
+    shield: '<path fill="currentColor" d="M12 1 3 5v6c0 5 3.8 9.7 9 11 5.2-1.3 9-6 9-11V5l-9-4z"/>',
   };
   function iconSvg(name) { return '<svg viewBox="0 0 24 24">' + (I[name] || '') + '</svg>'; }
 
@@ -229,9 +230,16 @@
   /* ---------- REVIEW ---------- */
   function buildReview() {
     const panel = el('div', { class: 'ribbon-panel' });
+    const guardBtn = rbtn({
+      icon: 'shield', label: 'Screen guard', id: 'btnScreenGuard',
+      title: 'Best-effort deterrent: blanks the page on screenshot keys / focus loss and blocks right-click & copy. Note: a browser cannot fully block screen capture.',
+      onClick: (b) => { if (window.Guard) { Guard.toggle(); b.classList.toggle('guard-active', Guard.isEnabled()); } }
+    });
+    if (window.Guard && Guard.isEnabled()) guardBtn.classList.add('guard-active');
     panel.appendChild(group('Protect', [
       rbtn({ icon: 'lock', label: 'Password', title: 'Encrypt with a password', onClick: openSecurityDialog }),
       rbtn({ icon: 'unlock', label: 'Unlock', title: 'Save an unprotected copy', onClick: () => Operations.unlock() }),
+      guardBtn,
     ]));
     panel.appendChild(group('Modify', [
       rbtn({ icon: 'watermark', label: 'Watermark', onClick: openWatermarkDialog }),
